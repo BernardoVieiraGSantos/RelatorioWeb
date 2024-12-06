@@ -37,31 +37,48 @@
 </template>
 
 <script>
+import axios from "axios"; // Importa o Axios
+
 export default {
   name: "LoginPage",
   data() {
     return {
-      username: "",
-      password: "",
-      isLoading: false,
+      username: "", // Nome de usuário inserido no formulário
+      password: "", // Senha inserida no formulário
+      isLoading: false, // Controla o estado de carregamento
+      error: "", // Armazena mensagens de erro
+      dados: null, // Armazena a resposta da API
     };
   },
   methods: {
-    login() {
-      this.isLoading = true; // Inicia o carregamento
-      setTimeout(() => {
-        this.isLoading = false; // Simula o fim do processo de login
+    async login() {
 
-        if (this.username === "admin" && this.password === "1234") {
-          alert("Login realizado com sucesso!");
-        } else {
-          alert("Usuário ou senha incorretos.");
+      //atraves do form receber os valores de login e senha
+
+      const json = {
+          usuario: this.username,
+          senha: this.password
         }
-      }, 2000); // Simula um atraso de 2 segundos
+
+        var resposta = await axios.post("http://localhost:5003/autenticar", json);
+
+        console.log(resposta.data)
+
+        //nao tem necessidade de colocar == true, dessa forma que fiz ela ja enterpreta
+        if(resposta.data.success){
+          //logica para direcionar para a pagina de home
+            console.log("Login bem  sucedido!");
+            this.$router.push("/HomePage");
+        }else{
+          console.log('Login invalido')
+        }
+        return resposta
     },
   },
 };
 </script>
+
+
 
 
 <style scoped>
@@ -148,10 +165,12 @@ export default {
 
 .user-icon::before {
   content: "👤";
+  color: white;
 }
 
 .lock-icon::before {
   content: "🔒";
+  color: white;
 }
 
 .input {
@@ -176,7 +195,7 @@ export default {
 
 /* Esqueceu a senha */
 .forgot-password {
-  color: #ece107;
+  color: #15660da5;
   font-size: 0.9rem;
   margin-bottom: 20px;
   text-align: right;
